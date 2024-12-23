@@ -22,7 +22,7 @@ import com.coreoz.plume.jersey.errors.WsException;
 import com.coreoz.plume.jersey.security.basic.Credentials;
 import com.coreoz.plume.jersey.security.permission.PublicApi;
 import com.coreoz.plume.mfa.authenticator.services.MfaAuthenticatorService;
-import com.coreoz.plume.mfa.authenticator.webservices.data.MfaQrcode;
+import com.coreoz.plume.mfa.authenticator.webservices.data.AuthenticatorQrcode;
 
 @Path("/auhenticator")
 @Tag(name = "admin-session", description = "Manage the administration session")
@@ -32,37 +32,37 @@ import com.coreoz.plume.mfa.authenticator.webservices.data.MfaQrcode;
 @PublicApi
 @Singleton
 public class AuthenticatorWs {
-	private final Logger logger = LoggerFactory.getLogger(AuthenticatorWs.class);
-	private final MfaAuthenticatorService mfaAuthenticatorService;
+    private final Logger logger = LoggerFactory.getLogger(AuthenticatorWs.class);
+    private final MfaAuthenticatorService mfaAuthenticatorService;
 
-	@Inject
-	public AuthenticatorWs(MfaAuthenticatorService mfaAuthenticatorService) {
-		this.mfaAuthenticatorService = mfaAuthenticatorService;
-	}
+    @Inject
+    public AuthenticatorWs(MfaAuthenticatorService mfaAuthenticatorService) {
+        this.mfaAuthenticatorService = mfaAuthenticatorService;
+    }
 
-	@POST
-	@Operation(description = "Generate a qrcode for MFA enrollment")
+    @POST
+    @Operation(description = "Generate a qrcode for MFA enrollment")
     @Path("/qrcode-url")
-	public MfaQrcode qrCodeUrl(Credentials credentials) {
+    public AuthenticatorQrcode qrCodeUrl(Credentials credentials) {
         // Generate MFA secret key and QR code URL
         try {
             String secretKey = mfaAuthenticatorService.createMfaAuthenticatorSecretKey(credentials);
             String qrCodeUrl = mfaAuthenticatorService.getQRBarcodeURL(credentials, secretKey);
 
             // Return the QR code URL to the client
-            return new MfaQrcode(qrCodeUrl);
+            return new AuthenticatorQrcode(qrCodeUrl);
         } catch (Exception e) {
             logger.debug("erreur lors de la génération du QR code", e);
-			// TODO: Delete the secret key from the database
+            // TODO: Delete the secret key from the database
             throw new WsException(WsError.INTERNAL_ERROR);
         }
-	}
+    }
 
     @POST
-	@Operation(description = "Generate a qrcode for MFA enrollment")
+    @Operation(description = "Generate a qrcode for MFA enrollment")
     @Path("/qrcode")
-	public Response qrCode(Credentials credentials) {
-		// First user needs to be authenticated (an exception will be raised otherwise)
+    public Response qrCode(Credentials credentials) {
+        // First user needs to be authenticated (an exception will be raised otherwise)
 
         // Generate MFA secret key and QR code URL
         try {
@@ -78,5 +78,5 @@ public class AuthenticatorWs {
             logger.debug("erreur lors de la génération du QR code", e);
             throw new WsException(WsError.INTERNAL_ERROR);
         }
-	}
+    }
 }

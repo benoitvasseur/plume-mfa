@@ -73,7 +73,7 @@ public Response verifyMfa(AuthenticatorCredentials credentials) {
 ```
 
 Secret key hashing
-----------------
+------------------
 To use this module without our secret key encryption, you may want to provide implementations of `SecretKeyEncryption`, and `MfaSecretKeyEncryption`.
 As an example, here is what is defined in the Admin Web-services Guice configuration:
 
@@ -83,7 +83,7 @@ bind(MfaSecretKeyEncryption.class).toProvider(MfaSecretKeyEncryptionProvider.cla
 ```
 
 Note that this service is already bound if you are already using `GuiceMfaAuthenticatorWithDefaultsModule`.
-```
+
 
 Upgrade instructions
 --------------------
