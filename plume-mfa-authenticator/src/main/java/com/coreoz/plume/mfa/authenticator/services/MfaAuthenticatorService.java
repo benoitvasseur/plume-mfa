@@ -90,7 +90,8 @@ public class MfaAuthenticatorService {
         return secretKey;
     }
 
-    public boolean isCredentialsValidForUser(Long idUser, int code) {
+    public boolean isCredentialsValidForUser(String username, int code) {
+        Long idUser = userService.userId(username);
         List<MfaAuthenticator> authenticators = mfaAuthenticatorDao.findByIdUser(idUser);
         return authenticators.stream().anyMatch(mfa -> verifyCode(mfa.getSecretKey(), code));
     }

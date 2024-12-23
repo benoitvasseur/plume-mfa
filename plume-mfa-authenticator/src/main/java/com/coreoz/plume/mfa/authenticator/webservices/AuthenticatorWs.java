@@ -22,7 +22,6 @@ import com.coreoz.plume.jersey.errors.WsException;
 import com.coreoz.plume.jersey.security.basic.Credentials;
 import com.coreoz.plume.jersey.security.permission.PublicApi;
 import com.coreoz.plume.mfa.authenticator.services.MfaAuthenticatorService;
-import com.coreoz.plume.mfa.authenticator.webservices.data.AuthenticatorCredentials;
 import com.coreoz.plume.mfa.authenticator.webservices.data.MfaQrcode;
 
 @Path("/auhenticator")
@@ -80,11 +79,4 @@ public class AuthenticatorWs {
             throw new WsException(WsError.INTERNAL_ERROR);
         }
 	}
-
-    @POST
-    @Path("/verify")
-    @Operation(description = "Verify MFA code for authentication")
-    public Response verifyMfa(AuthenticatorCredentials credentials) {
-        return Response.ok().build();
-    }
 }

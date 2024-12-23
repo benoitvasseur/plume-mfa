@@ -13,6 +13,7 @@ Installation
     <artifactId>plume-mfa-authenticator</artifactId>
 </dependency>
 ```
+
 1. Guice module: `install(new GuiceMfaAuthenticatorWithDefaultsModule())`
 2. Jersey web-services: `packages("com.coreoz.plume.mfa.webservices")`
 3. [Generate a hash secret key](#configuration) and register it in your configuration: `mfa.secret = "long_generated_password_to_secure_mfa_tokens"`
@@ -20,6 +21,9 @@ Installation
 5. [Current user access](#current-user-access)
 6. [Secret key hashing](#secret-key-hashing) (optional)
 7. SQL, see [setup files](plume-mfa-authenticator/sql)
+8. Implement the [verify webservice](#verify-the-mfa-token)
+9. Implement the frontend and call the webservice `/auhenticator/qrcode` to get an image of the QRCode that need to be scanned by the Authenticator app of the user. This app will generate a 6 digits code that need to be sent to the verify webservice (from step `8`) to verify the code.
+Alternatively, you can use the webservice `/auhenticator/qrcode-url` to get the URL contained in the QRCode image.
 
 Current user access
 -------------------
@@ -39,6 +43,33 @@ mfa.secret = "long_generated_password_to_secure_mfa_tokens"
 
 # This key is used as the issuer by Google Authenticator to generate QRCode
 mfa.appname = "App name"
+```
+
+Verify the MFA token
+--------------------
+
+To verify the MFA token through a webservice, you'll need to :
+1. use the `MfaAuthenticatorService` to verify the token
+2. return your websession after the token has been verified
+
+```java
+@POST
+@Path("/verify")
+@Operation(description = "Verify MFA code for authentication")
+public Response verifyMfa(AuthenticatorCredentials credentials) {
+    // first user needs to be authenticated (an exception will be raised otherwise)
+    if (mfaAuthenticatorService.isCredentialsValidForUser(credentials.getUserName(), credentials.getCode())) {
+        AuthenticatedUser authenticatedUser = // Fetch the authenticated user
+        // if the client is authenticated, the fingerprint can be generated if needed
+        FingerprintWithHash fingerprintWithHash = sessionUseFingerprintCookie ? generateFingerprint() : NULL_FINGERPRINT;
+        return withFingerprintCookie(
+            Response.ok(toAdminSession(toWebSession(authenticatedUser, fingerprintWithHash.getHash()))),
+            fingerprintWithHash.getFingerprint()
+        )
+        .build();
+    }
+    return Response.status(Response.Status.UNAUTHORIZED).build();
+}
 ```
 
 Secret key hashing
