@@ -3,8 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.coreoz</groupId>
-	<artifactId>plume-mfa-parent</artifactId>
-	<version>4.3.1-SNAPSHOT</version>
+	<artifactId>plume-mfa</artifactId>
+	<version>4.3.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Plume MFA Parent</name>
@@ -70,9 +70,9 @@
 	</properties>
 
 	<modules>
-		<module>plume-mfa-core</module>
+		<!-- <module>plume-mfa-core</module> -->
 		<module>plume-mfa-authenticator</module>
-		<module>plume-mfa-browser</module>
+		<!-- <module>plume-mfa-browser</module> -->
 	</modules>
 
 	<profiles>

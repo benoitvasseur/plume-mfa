@@ -4,8 +4,8 @@
 
 	<parent>
 		<groupId>com.coreoz</groupId>
-		<artifactId>plume-mfa-parent</artifactId>
-		<version>4.3.1-SNAPSHOT</version>
+		<artifactId>plume-mfa</artifactId>
+		<version>4.3.2-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>plume-mfa-authenticator</artifactId>
@@ -127,7 +127,7 @@
 			<dependency>
 				<groupId>com.coreoz</groupId>
 				<artifactId>plume-admin-dependencies</artifactId>
-				<version>${project.version}</version>
+				<version>4.3.1-SNAPSHOT</version>
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
