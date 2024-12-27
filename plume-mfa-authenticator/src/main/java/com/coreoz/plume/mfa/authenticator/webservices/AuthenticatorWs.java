@@ -19,12 +19,12 @@ import org.slf4j.LoggerFactory;
 
 import com.coreoz.plume.jersey.errors.WsError;
 import com.coreoz.plume.jersey.errors.WsException;
-import com.coreoz.plume.jersey.security.basic.Credentials;
 import com.coreoz.plume.jersey.security.permission.PublicApi;
 import com.coreoz.plume.mfa.authenticator.services.MfaAuthenticatorService;
 import com.coreoz.plume.mfa.authenticator.webservices.data.AuthenticatorQrcode;
+import com.coreoz.plume.mfa.authenticator.webservices.data.UserCredentials;
 
-@Path("/auhenticator")
+@Path("/authenticator")
 @Tag(name = "admin-session", description = "Manage the administration session")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -43,7 +43,7 @@ public class AuthenticatorWs {
     @POST
     @Operation(description = "Generate a qrcode for MFA enrollment")
     @Path("/qrcode-url")
-    public AuthenticatorQrcode qrCodeUrl(Credentials credentials) {
+    public AuthenticatorQrcode qrCodeUrl(UserCredentials credentials) {
         // Generate MFA secret key and QR code URL
         try {
             String secretKey = mfaAuthenticatorService.createMfaAuthenticatorSecretKey(credentials);
@@ -61,7 +61,7 @@ public class AuthenticatorWs {
     @POST
     @Operation(description = "Generate a qrcode for MFA enrollment")
     @Path("/qrcode")
-    public Response qrCode(Credentials credentials) {
+    public Response qrCode(UserCredentials credentials) {
         // First user needs to be authenticated (an exception will be raised otherwise)
 
         // Generate MFA secret key and QR code URL

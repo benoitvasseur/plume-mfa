@@ -15,10 +15,10 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.coreoz.plume.jersey.security.basic.Credentials;
 import com.coreoz.plume.mfa.authenticator.db.daos.MfaAuthenticatorDao;
 import com.coreoz.plume.mfa.authenticator.db.generated.MfaAuthenticator;
 import com.coreoz.plume.mfa.authenticator.services.encryption.MfaSecretKeyEncryptionProvider;
+import com.coreoz.plume.mfa.authenticator.webservices.data.UserCredentials;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 
@@ -55,12 +55,12 @@ public class MfaAuthenticatorService {
         return mfaSecretKeyEncryptionProvider.get().encrypt(secretKey);
     }
 
-    public String getQRBarcodeURL(Credentials user, String secret) {
+    public String getQRBarcodeURL(UserCredentials user, String secret) {
         final String issuer = configurationService.appName();
-        return String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s", issuer, user.getUsername(), secret, issuer);
+        return String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s", issuer, user.getUserName(), secret, issuer);
     }
 
-    public byte[] generateQRCode(Credentials user, String secret) {
+    public byte[] generateQRCode(UserCredentials user, String secret) {
         String qrBarcodeURL = getQRBarcodeURL(user, secret);
         try {
             return QRCodeGenerator.generateQRCodeImage(qrBarcodeURL, 200, 200);
@@ -79,8 +79,8 @@ public class MfaAuthenticatorService {
         }
     }
 
-    public String createMfaAuthenticatorSecretKey(Credentials credentials) throws Exception {
-        Long idUser = userService.authenticatedUserId(credentials.getUsername(), credentials.getPassword());
+    public String createMfaAuthenticatorSecretKey(UserCredentials credentials) throws Exception {
+        Long idUser = userService.authenticatedUserId(credentials.getUserName(), credentials.getPassword());
         String secretKey = generateSecretKey();
         MfaAuthenticator mfa = new MfaAuthenticator();
         mfa.setSecretKey(hashSecretKey(secretKey));
