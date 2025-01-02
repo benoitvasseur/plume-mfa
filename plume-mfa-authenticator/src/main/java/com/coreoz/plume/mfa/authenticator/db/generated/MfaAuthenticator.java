@@ -1,7 +1,7 @@
 package com.coreoz.plume.mfa.authenticator.db.generated;
 
-import javax.annotation.Generated;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import javax.annotation.processing.Generated;
 import com.querydsl.sql.Column;
 
 /**
@@ -10,16 +10,33 @@ import com.querydsl.sql.Column;
 @Generated("com.coreoz.plume.db.querydsl.generation.IdBeanSerializer")
 public class MfaAuthenticator extends com.coreoz.plume.db.querydsl.crud.CrudEntityQuerydsl {
 
-    @Column("id")
+    @Column("creation_date")
+    private java.time.Instant creationDate;
+
     @JsonSerialize(using=com.fasterxml.jackson.databind.ser.std.ToStringSerializer.class)
+    @Column("id")
     private Long id;
 
-    @Column("id_user")
     @JsonSerialize(using=com.fasterxml.jackson.databind.ser.std.ToStringSerializer.class)
+    @Column("id_user")
     private Long idUser;
+
+    @Column("is_enabled")
+    private Boolean isEnabled;
+
+    @Column("last_used_date")
+    private java.time.Instant lastUsedDate;
 
     @Column("secret_key")
     private String secretKey;
+
+    public java.time.Instant getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(java.time.Instant creationDate) {
+        this.creationDate = creationDate;
+    }
 
     public Long getId() {
         return id;
@@ -37,12 +54,33 @@ public class MfaAuthenticator extends com.coreoz.plume.db.querydsl.crud.CrudEnti
         this.idUser = idUser;
     }
 
+    public Boolean getIsEnabled() {
+        return isEnabled;
+    }
+
+    public void setIsEnabled(Boolean isEnabled) {
+        this.isEnabled = isEnabled;
+    }
+
+    public java.time.Instant getLastUsedDate() {
+        return lastUsedDate;
+    }
+
+    public void setLastUsedDate(java.time.Instant lastUsedDate) {
+        this.lastUsedDate = lastUsedDate;
+    }
+
     public String getSecretKey() {
         return secretKey;
     }
 
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
+    }
+
+    @Override
+    public String toString() {
+        return "MfaAuthenticator#" + id;
     }
 
     @Override
@@ -66,11 +104,6 @@ public class MfaAuthenticator extends com.coreoz.plume.db.querydsl.crud.CrudEnti
         int result = 1;
         result = prime * result + id.hashCode();
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return "MfaAuthenticator#" + id;
     }
 
 }

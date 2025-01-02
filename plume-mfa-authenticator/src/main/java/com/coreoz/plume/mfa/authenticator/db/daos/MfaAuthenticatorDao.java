@@ -1,5 +1,6 @@
 package com.coreoz.plume.mfa.authenticator.db.daos;
 
+import java.time.Instant;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -24,5 +25,20 @@ public class MfaAuthenticatorDao extends CrudDaoQuerydsl<MfaAuthenticator> {
 			.from(QMfaAuthenticator.mfaAuthenticator)
 			.where(QMfaAuthenticator.mfaAuthenticator.idUser.eq(idUser))
 			.fetch();
+	}
+
+	/**
+	 * Find all MfaAuthenticator that are not enabled and have a creation date older than the provided date
+	 */
+	public List<MfaAuthenticator> findDisabledAndOlderThan(Instant date) {
+		return transactionManager.selectQuery()
+			.select(QMfaAuthenticator.mfaAuthenticator)
+			.from(QMfaAuthenticator.mfaAuthenticator)
+			.where(
+				QMfaAuthenticator.mfaAuthenticator.isEnabled.isFalse()
+				.and(QMfaAuthenticator.mfaAuthenticator.creationDate.before(date))
+			)
+			.fetch();
+
 	}
 }

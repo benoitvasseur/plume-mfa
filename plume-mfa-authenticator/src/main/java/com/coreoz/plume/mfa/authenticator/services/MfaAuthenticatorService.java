@@ -2,6 +2,7 @@ package com.coreoz.plume.mfa.authenticator.services;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -17,6 +18,8 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.coreoz.plume.mfa.authenticator.db.daos.MfaAuthenticatorDao;
 import com.coreoz.plume.mfa.authenticator.db.generated.MfaAuthenticator;
+import com.coreoz.plume.mfa.authenticator.errors.MfaError;
+import com.coreoz.plume.mfa.authenticator.errors.MfaException;
 import com.coreoz.plume.mfa.authenticator.services.encryption.MfaSecretKeyEncryptionProvider;
 import com.coreoz.plume.mfa.authenticator.webservices.data.UserCredentials;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
@@ -46,13 +49,29 @@ public class MfaAuthenticatorService {
         this.userService = userService;
     }
 
-    public String generateSecretKey() throws Exception {
-        GoogleAuthenticatorKey key = authenticator.createCredentials();
-        return key.getKey();
+    /**
+     * Generate a new secret key for a MFA authenticator
+     * The secret key is not hashed
+     * @return
+     * @throws Exception
+     */
+    public String generateSecretKey() throws MfaException {
+        try {
+            GoogleAuthenticatorKey key = authenticator.createCredentials();
+            return key.getKey();
+        } catch (Exception e) {
+            logger.error("Error generating secret key", e);
+            throw new MfaException(MfaError.GENERATE_KEY_ERROR);
+        }
     }
 
-    public String hashSecretKey(String secretKey) throws Exception {
-        return mfaSecretKeyEncryptionProvider.get().encrypt(secretKey);
+    public String hashSecretKey(String secretKey) throws MfaException {
+        try {
+            return mfaSecretKeyEncryptionProvider.get().encrypt(secretKey);
+        } catch (Exception e) {
+            logger.error("Error hashing secret key", e);
+            throw new MfaException(MfaError.ENCRYPTION_ERROR);
+        }
     }
 
     public String getQRBarcodeURL(UserCredentials user, String secret) {
@@ -70,7 +89,7 @@ public class MfaAuthenticatorService {
         }
     }
 
-    public boolean verifyCode(String secret, int code) {
+    private boolean verifyCode(String secret, int code) {
         try {
             return authenticator.authorize(mfaSecretKeyEncryptionProvider.get().decrypt(secret), code);
         } catch (Exception e) {
@@ -79,21 +98,60 @@ public class MfaAuthenticatorService {
         }
     }
 
-    public String createMfaAuthenticatorSecretKey(UserCredentials credentials) throws Exception {
+    /**
+     * Create a new MFA authenticator secret key for a user
+     * The secret key is stored hashed in the database and the plain secret key is returned
+     * @param credentials
+     * @return
+     * @throws Exception
+     */
+    public String createMfaAuthenticatorSecretKey(UserCredentials credentials) throws MfaException {
         Long idUser = userService.authenticatedUserId(credentials.getUserName(), credentials.getPassword());
+        if (idUser == null) {
+            throw new MfaException(MfaError.NO_USER_FOUND);
+        }
         String secretKey = generateSecretKey();
         MfaAuthenticator mfa = new MfaAuthenticator();
         mfa.setSecretKey(hashSecretKey(secretKey));
         mfa.setIdUser(idUser);
+        mfa.setIsEnabled(false);
+        mfa.setCreationDate(Instant.now());
         mfaAuthenticatorDao.save(mfa);
 
         return secretKey;
     }
 
-    public boolean isCredentialsValidForUser(String username, int code) {
+    private MfaAuthenticator findValidAuthenticator(String username, int code) {
         Long idUser = userService.userId(username);
         List<MfaAuthenticator> authenticators = mfaAuthenticatorDao.findByIdUser(idUser);
-        return authenticators.stream().anyMatch(mfa -> verifyCode(mfa.getSecretKey(), code));
+        return authenticators.stream().filter(mfa -> verifyCode(mfa.getSecretKey(), code)).findFirst().orElse(null);
+    }
+
+    /**
+     * Check if the authenticator code is valid for a user
+     * @param username
+     * @param code
+     * @return
+     */
+    public boolean isCredentialsValidForUser(String username, int code) {
+        MfaAuthenticator validAuthenticator = findValidAuthenticator(username, code);
+        if (validAuthenticator != null) {
+            validAuthenticator.setIsEnabled(true);
+            validAuthenticator.setLastUsedDate(Instant.now());
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * List all the authenticators for a user, can be used to show the user
+     * which authenticators are enabled and delete them if needed
+     * @param username
+     * @return
+     */
+    public List<MfaAuthenticator> listAuthenticators(String username) {
+        Long idUser = userService.userId(username);
+        return mfaAuthenticatorDao.findByIdUser(idUser);
     }
 
     private static class QRCodeGenerator {
@@ -105,5 +163,22 @@ public class MfaAuthenticatorService {
             MatrixToImageWriter.writeToStream(bitMatrix, "PNG", pngOutputStream);
             return pngOutputStream.toByteArray();
         }
+    }
+
+    /**
+     * Delete an authenticator by its id
+     * @param id
+     */
+    public void deleteAuthenticator(long id) {
+        mfaAuthenticatorDao.delete(id);
+    }
+
+    /**
+     * delete all not enabled authenticator with a creation date older than the given date
+     * @param date the date to compare the creation date with
+     */
+    public void deleteOldNotEnabledAuthenticators(Instant date) {
+        mfaAuthenticatorDao.findDisabledAndOlderThan(date)
+            .forEach(authenticator -> deleteAuthenticator(authenticator.getId()));
     }
 }

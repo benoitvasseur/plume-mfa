@@ -5,7 +5,7 @@ import static com.querydsl.core.types.PathMetadataFactory.*;
 import com.querydsl.core.types.dsl.*;
 
 import com.querydsl.core.types.PathMetadata;
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
 
 import com.querydsl.sql.ColumnMetadata;
@@ -20,13 +20,19 @@ import java.sql.Types;
 @Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QMfaAuthenticator extends com.querydsl.sql.RelationalPathBase<MfaAuthenticator> {
 
-    private static final long serialVersionUID = 895027019;
+    private static final long serialVersionUID = 1461888419;
 
     public static final QMfaAuthenticator mfaAuthenticator = new QMfaAuthenticator("PLM_MFA_AUTHENTICATOR");
+
+    public final DateTimePath<java.time.Instant> creationDate = createDateTime("creationDate", java.time.Instant.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final NumberPath<Long> idUser = createNumber("idUser", Long.class);
+
+    public final BooleanPath isEnabled = createBoolean("isEnabled");
+
+    public final DateTimePath<java.time.Instant> lastUsedDate = createDateTime("lastUsedDate", java.time.Instant.class);
 
     public final StringPath secretKey = createString("secretKey");
 
@@ -58,9 +64,12 @@ public class QMfaAuthenticator extends com.querydsl.sql.RelationalPathBase<MfaAu
     }
 
     public void addMetadata() {
+        addMetadata(creationDate, ColumnMetadata.named("creation_date").withIndex(4).ofType(Types.TIMESTAMP).withSize(19).notNull());
         addMetadata(id, ColumnMetadata.named("id").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(idUser, ColumnMetadata.named("id_user").withIndex(4).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(secretKey, ColumnMetadata.named("secret_key").withIndex(2).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(idUser, ColumnMetadata.named("id_user").withIndex(2).ofType(Types.BIGINT).withSize(19).notNull());
+        addMetadata(isEnabled, ColumnMetadata.named("is_enabled").withIndex(6).ofType(Types.BOOLEAN).withSize(3).notNull());
+        addMetadata(lastUsedDate, ColumnMetadata.named("last_used_date").withIndex(5).ofType(Types.TIMESTAMP).withSize(19));
+        addMetadata(secretKey, ColumnMetadata.named("secret_key").withIndex(3).ofType(Types.VARCHAR).withSize(255));
     }
 
 }
