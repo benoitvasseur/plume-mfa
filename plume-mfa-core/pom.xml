@@ -8,10 +8,10 @@
 		<version>4.3.2-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>plume-mfa-browser</artifactId>
+	<artifactId>plume-mfa-core</artifactId>
 	<packaging>jar</packaging>
-	<name>Plume MFA Browser</name>
-	<description>A simple way to add Browser enrollement with WebAuthn</description>
+	<name>Plume MFA Core</name>
+	<description>Common Mfa features used by Plume Mfa</description>
 
 	<build>
 		<resources>
@@ -31,26 +31,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.coreoz</groupId>
-			<artifactId>plume-db-querydsl</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.coreoz</groupId>
-			<artifactId>plume-db-querydsl-codegen</artifactId>
-			<scope>provided</scope>
+			<artifactId>plume-conf</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.coreoz</groupId>
 			<artifactId>plume-web-jersey</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.coreoz</groupId>
-			<artifactId>plume-mfa-core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>io.swagger.core.v3</groupId>
-			<artifactId>swagger-annotations</artifactId>
 		</dependency>
 
 		<dependency>
@@ -59,12 +44,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- used only for manual code generation -->
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<optional>true</optional>
-		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
@@ -82,23 +61,6 @@
 			<optional>true</optional>
 		</dependency>
 
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- webauthn: https://developers.yubico.com/java-webauthn-server/ -->
-		<dependency>
-			<groupId>com.yubico</groupId>
-  			<artifactId>webauthn-server-core</artifactId>
-  			<version>2.5.3</version>
-		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jdk8</artifactId>

@@ -44,6 +44,8 @@ public class QMfaBrowser extends com.querydsl.sql.RelationalPathBase<MfaBrowser>
 
     public final NumberPath<Integer> signatureCount = createNumber("signatureCount", Integer.class);
 
+    public final SimplePath<byte[]> userHandle = createSimple("userHandle", byte[].class);
+
     public final com.querydsl.sql.PrimaryKey<MfaBrowser> primary = createPrimaryKey(id);
 
     public QMfaBrowser(String variable) {
@@ -74,14 +76,15 @@ public class QMfaBrowser extends com.querydsl.sql.RelationalPathBase<MfaBrowser>
     public void addMetadata() {
         addMetadata(attestation, ColumnMetadata.named("attestation").withIndex(5).ofType(Types.LONGVARBINARY).withSize(65535).notNull());
         addMetadata(clientDataJson, ColumnMetadata.named("client_data_json").withIndex(6).ofType(Types.LONGVARBINARY).withSize(65535).notNull());
-        addMetadata(creationDate, ColumnMetadata.named("creation_date").withIndex(8).ofType(Types.TIMESTAMP).withSize(19).notNull());
+        addMetadata(creationDate, ColumnMetadata.named("creation_date").withIndex(9).ofType(Types.TIMESTAMP).withSize(19).notNull());
         addMetadata(id, ColumnMetadata.named("id").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
         addMetadata(idUser, ColumnMetadata.named("id_user").withIndex(2).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(isDiscoverable, ColumnMetadata.named("is_discoverable").withIndex(7).ofType(Types.BOOLEAN).withSize(3));
+        addMetadata(isDiscoverable, ColumnMetadata.named("is_discoverable").withIndex(8).ofType(Types.BOOLEAN).withSize(3));
         addMetadata(keyId, ColumnMetadata.named("key_id").withIndex(3).ofType(Types.LONGVARBINARY).withSize(65535).notNull());
-        addMetadata(lastUsedDate, ColumnMetadata.named("last_used_date").withIndex(9).ofType(Types.TIMESTAMP).withSize(19));
+        addMetadata(lastUsedDate, ColumnMetadata.named("last_used_date").withIndex(10).ofType(Types.TIMESTAMP).withSize(19));
         addMetadata(publicKeyCose, ColumnMetadata.named("public_key_cose").withIndex(4).ofType(Types.LONGVARBINARY).withSize(65535).notNull());
-        addMetadata(signatureCount, ColumnMetadata.named("signature_count").withIndex(10).ofType(Types.INTEGER).withSize(10).notNull());
+        addMetadata(signatureCount, ColumnMetadata.named("signature_count").withIndex(11).ofType(Types.INTEGER).withSize(10).notNull());
+        addMetadata(userHandle, ColumnMetadata.named("user_handle").withIndex(7).ofType(Types.LONGVARBINARY).withSize(65535));
     }
 
 }

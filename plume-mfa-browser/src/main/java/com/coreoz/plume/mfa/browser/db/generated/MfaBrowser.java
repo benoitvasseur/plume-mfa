@@ -42,6 +42,9 @@ public class MfaBrowser extends com.coreoz.plume.db.querydsl.crud.CrudEntityQuer
     @Column("signature_count")
     private Integer signatureCount;
 
+    @Column("user_handle")
+    private byte[] userHandle;
+
     public byte[] getAttestation() {
         return attestation;
     }
@@ -120,6 +123,14 @@ public class MfaBrowser extends com.coreoz.plume.db.querydsl.crud.CrudEntityQuer
 
     public void setSignatureCount(Integer signatureCount) {
         this.signatureCount = signatureCount;
+    }
+
+    public byte[] getUserHandle() {
+        return userHandle;
+    }
+
+    public void setUserHandle(byte[] userHandle) {
+        this.userHandle = userHandle;
     }
 
     @Override

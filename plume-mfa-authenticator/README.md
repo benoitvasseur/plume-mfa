@@ -87,10 +87,10 @@ An exemple of implementation could look like this:
 @Path("/qrcode")
 public Response qrCode(UserCredentials credentials) {
     // First user needs to be authenticated (an exception will be raised otherwise)
-
     Validators.checkRequired("Json creadentials", credentials);
     Validators.checkRequired("User name", credentials.getUserName());
     Validators.checkRequired("Password", credentials.getPassword());
+
     // Generate MFA secret key and QR code URL
     try {
         String secretKey = mfaAuthenticatorService.createMfaAuthenticatorSecretKey(credentials);

@@ -7,6 +7,7 @@ CREATE TABLE  `PLM_MFA_BROWSER` (
   `public_key_cose` BLOB NOT NULL,
   `attestation` BLOB NOT NULL,
   `client_data_json` BLOB NOT NULL,
+  `user_handle` BLOB DEFAULT NULL,
   `is_discoverable` tinyint(1) DEFAULT NULL,
   `creation_date` datetime NOT NULL,
   `last_used_date` datetime DEFAULT NULL,
