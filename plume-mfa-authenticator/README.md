@@ -24,7 +24,8 @@ Installation
 8. Implement the [verify webservice](#verify-the-mfa-token)
 9. Implement the frontend and call the webservice `/auhenticator/qrcode` to get an image of the QRCode that need to be scanned by the Authenticator app of the user. This app will generate a 6 digits code that need to be sent to the verify webservice (from step `8`) to verify the code.
 Alternatively, you can use the webservice `/auhenticator/qrcode-url` to get the URL contained in the QRCode image.
-10. clean up [unregistered authenticator](#clean-up-unregistered-authenticator) (optional)
+10. Disable previous API that could logged in the user without the MFA token. For exemple, API from SessionWS if you are using Plume-admin dependencies.
+11. clean up [unregistered authenticator](#clean-up-unregistered-authenticator) (optional)
 
 Current user access
 -------------------
